@@ -1,0 +1,34 @@
+<svg width="960" height="720" viewBox="0 0 960 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="720" rx="40" fill="#F7FBFF"/>
+  <circle cx="182" cy="132" r="102" fill="#E0F2FE"/>
+  <circle cx="810" cy="570" r="126" fill="#ECFEFF"/>
+  <rect x="88" y="86" width="784" height="548" rx="36" fill="white"/>
+  <rect x="128" y="126" width="328" height="468" rx="28" fill="url(#paint0_linear)"/>
+  <rect x="504" y="126" width="328" height="116" rx="28" fill="#0F172A"/>
+  <text x="544" y="178" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="24" font-weight="700">Premium school fit</text>
+  <text x="544" y="214" fill="#93C5FD" font-family="Arial, sans-serif" font-size="17" font-weight="600">Board aware + sector aware</text>
+  <rect x="504" y="270" width="328" height="148" rx="28" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <text x="540" y="322" fill="#0F172A" font-family="Arial, sans-serif" font-size="23" font-weight="700">School-specific plan</text>
+  <rect x="540" y="346" width="198" height="18" rx="9" fill="#DBEAFE"/>
+  <rect x="540" y="376" width="156" height="18" rx="9" fill="#E0F2FE"/>
+  <rect x="504" y="446" width="156" height="148" rx="28" fill="#ECFEFF"/>
+  <text x="532" y="500" fill="#0891B2" font-family="Arial, sans-serif" font-size="22" font-weight="700">Sector 56</text>
+  <text x="532" y="534" fill="#0F766E" font-family="Arial, sans-serif" font-size="17" font-weight="600">Golf Course</text>
+  <text x="532" y="560" fill="#0F766E" font-family="Arial, sans-serif" font-size="17" font-weight="600">Extension Road</text>
+  <rect x="676" y="446" width="156" height="148" rx="28" fill="#EEF2FF"/>
+  <text x="704" y="502" fill="#3730A3" font-family="Arial, sans-serif" font-size="21" font-weight="700">Parent</text>
+  <text x="704" y="532" fill="#3730A3" font-family="Arial, sans-serif" font-size="21" font-weight="700">updates</text>
+  <circle cx="246" cy="268" r="66" fill="#0F172A"/>
+  <path d="M178 398C178 360.444 208.444 330 246 330C283.556 330 314 360.444 314 398V510H178V398Z" fill="#1D4ED8"/>
+  <circle cx="346" cy="330" r="46" fill="#1E293B"/>
+  <path d="M296 424C296 395.833 318.833 373 347 373C375.167 373 398 395.833 398 424V510H296V424Z" fill="#38BDF8"/>
+  <rect x="156" y="510" width="266" height="30" rx="15" fill="#0F172A"/>
+  <rect x="186" y="548" width="146" height="16" rx="8" fill="#DBEAFE"/>
+  <rect x="340" y="548" width="52" height="16" rx="8" fill="#E0F2FE"/>
+  <defs>
+    <linearGradient id="paint0_linear" x1="128" y1="126" x2="456" y2="594" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EEF6FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+</svg>
