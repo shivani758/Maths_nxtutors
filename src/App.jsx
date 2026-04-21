@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import LegacyMathsSubjectRoute from "./pages/LegacyMathsSubjectRoute";
 import MathsBoardPage from "./pages/MathsBoardPage";
@@ -49,11 +49,12 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin-login" element={<Navigate to="/admin/login" replace />} />
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute allowedRoles={["admin"]} fallbackPath="/admin-login">
+            <ProtectedRoute allowedRoles={["admin"]} fallbackPath="/admin/login">
               <AdminDashboard />
             </ProtectedRoute>
           }

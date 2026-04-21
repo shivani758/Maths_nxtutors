@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { authenticateAdminCredentials } from "../services/adminAuthService";
 
 const STORAGE_KEY = "maths-bodhi-auth";
 const AuthContext = createContext(null);
@@ -33,29 +34,20 @@ export function AuthProvider({ children }) {
       isLoggedIn: Boolean(session),
       loginStudent: (profile) => setSession({ role: "student", profile, loggedInAt: Date.now() }),
       loginTutor: (profile) => setSession({ role: "tutor", profile, loggedInAt: Date.now() }),
-      loginAdmin: ({ loginId, password }) => {
-        const adminId = import.meta.env.VITE_ADMIN_ID || "admin@mathsbodhi.com";
-        const adminPassword =
-          import.meta.env.VITE_ADMIN_PASSWORD || "MathsBodhi@2026";
+      loginAdmin: ({ username, password }) => {
+        const result = authenticateAdminCredentials({ username, password });
 
-        if (loginId === adminId && password === adminPassword) {
+        if (result.success) {
           setSession({
             role: "admin",
-            profile: {
-              name: "Maths Bodhi Admin",
-              loginId,
-            },
+            profile: result.profile,
             loggedInAt: Date.now(),
           });
 
           return { success: true };
         }
 
-        return {
-          success: false,
-          error:
-            "Invalid admin login. Update VITE_ADMIN_ID and VITE_ADMIN_PASSWORD before deployment if you want custom credentials.",
-        };
+        return result;
       },
       logout: () => setSession(null),
     }),
