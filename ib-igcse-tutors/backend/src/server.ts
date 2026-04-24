@@ -6,9 +6,15 @@ async function start() {
   await connectDatabase();
 
   const app = createApp();
-  app.listen(env.PORT, env.HOST, () => {
-    console.log(`Maths Bodhi backend listening on http://${env.HOST}:${env.PORT}`);
-  });
+ const PORT = process.env.PORT || env.PORT || 4000;
+
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
+app.listen(PORT, () => {
+  console.log(`Maths Bodhi backend running on port ${PORT}`);
+});
 }
 
 start().catch((error) => {
