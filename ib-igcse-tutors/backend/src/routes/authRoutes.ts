@@ -5,6 +5,9 @@ import { loginController, logoutController, sessionController } from "../control
 const authRoutes = Router();
 
 authRoutes.post("/login", asyncHandler(loginController));
+authRoutes.post("/register", (_req, res) => {
+  res.json({ success: true, message: "Register route working" });
+});
 authRoutes.post("/logout", asyncHandler(logoutController));
 authRoutes.get("/session", asyncHandler(sessionController));
 

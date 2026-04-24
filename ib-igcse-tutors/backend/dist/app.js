@@ -17,9 +17,12 @@ import portalAuthRoutes from "./routes/portalAuthRoutes.js";
 import publicRoutes from "./routes/publicRoutes.js";
 export function createApp() {
     const app = express();
-    const allowedOrigins = new Set(env.FRONTEND_ORIGINS);
+    const allowedOrigins = new Set([
+        "http://localhost:5173",
+        "https://maths-nxtutors.vercel.app",
+        ...env.FRONTEND_ORIGINS,
+    ]);
     if (env.NODE_ENV !== "production") {
-        allowedOrigins.add("http://localhost:5173");
         allowedOrigins.add("http://127.0.0.1:5173");
         allowedOrigins.add("http://localhost:4173");
         allowedOrigins.add("http://127.0.0.1:4173");
@@ -40,7 +43,7 @@ export function createApp() {
     app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
     app.use(createSessionMiddleware());
     app.get("/api/health", (_req, res) => {
-        res.json({ success: true, data: { status: "ok" } });
+        res.json({ success: true, message: "API is working" });
     });
     app.use("/api/auth", authRoutes);
     app.use("/api/portal-auth", portalAuthRoutes);

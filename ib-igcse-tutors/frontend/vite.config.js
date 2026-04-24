@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const proxyTarget = String(env.VITE_API_PROXY_TARGET || 'http://localhost:4000').replace(/\/$/, '')
+  const proxyTarget = String(env.VITE_API_PROXY_TARGET || env.VITE_API_URL || '').replace(/\/$/, '')
 
   return {
     plugins: [react(), tailwindcss()],
@@ -12,13 +12,15 @@ export default defineConfig(({ mode }) => {
       host: 'localhost',
       port: 5173,
       strictPort: true,
-      proxy: {
-        '/api': {
-          target: proxyTarget,
-          changeOrigin: true,
-          secure: false,
-        },
-      },
+      proxy: proxyTarget
+        ? {
+            '/api': {
+              target: proxyTarget,
+              changeOrigin: true,
+              secure: false,
+            },
+          }
+        : undefined,
     },
   }
 })

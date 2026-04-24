@@ -1,9 +1,11 @@
-const API_BASE_URL = String(
-  import.meta.env.VITE_API_URL ?? import.meta.env.VITE_API_BASE_URL ?? "",
-).replace(/\/$/, "");
+if (!import.meta.env.VITE_API_URL) {
+  throw new Error("Missing VITE_API_URL");
+}
+
+const API_URL = String(import.meta.env.VITE_API_URL).replace(/\/$/, "");
 
 function buildUrl(path) {
-  return `${API_BASE_URL}${path}`;
+  return `${API_URL}${path}`;
 }
 
 export class ApiClientError extends Error {
@@ -22,7 +24,7 @@ export async function apiRequest(path, options = {}) {
     credentials: "include",
     cache: options.cache,
     headers: {
-      ...(options.body !== undefined ? { "Content-Type": "application/json" } : {}),
+      "Content-Type": "application/json",
       ...(options.headers ?? {}),
     },
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined,

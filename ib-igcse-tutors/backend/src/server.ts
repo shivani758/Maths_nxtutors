@@ -1,20 +1,15 @@
 import { createApp } from "./app.js";
 import { connectDatabase } from "./config/db.js";
-import { env } from "./config/env.js";
 
 async function start() {
   await connectDatabase();
 
   const app = createApp();
- const PORT = process.env.PORT || env.PORT || 4000;
+  const PORT = Number(process.env.PORT) || 10000;
 
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
-
-app.listen(PORT, () => {
-  console.log(`Maths Bodhi backend running on port ${PORT}`);
-});
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Maths Bodhi backend running on port ${PORT}`);
+  });
 }
 
 start().catch((error) => {
