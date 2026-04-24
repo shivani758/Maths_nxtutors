@@ -925,7 +925,7 @@ export const defaultSiteData = {
   contact: {
     phoneDisplay: "+91 9896825986",
     whatsappNumber: "919896825986",
-    email: "support@mathsbodhi.com",
+    email: "support@mathsbodhi.in",
     supportHours: "Mon to Sat, 9 AM to 8 PM",
     city: "Gurugram",
     state: "Haryana",

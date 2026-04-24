@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.mathsbodhi.com/sitemap.xml
+Sitemap: https://www.mathsbodhi.in/sitemap.xml
 

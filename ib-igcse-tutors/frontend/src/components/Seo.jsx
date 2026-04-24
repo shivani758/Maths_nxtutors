@@ -31,9 +31,10 @@ export default function Seo({
   canonicalPath = "/",
   imagePath = "/images/hero-maths-home.svg",
   schema = [],
+  robots = "index, follow",
 }) {
   useEffect(() => {
-    const siteUrl = import.meta.env.VITE_SITE_URL || "https://www.mathsbodhi.com";
+    const siteUrl = import.meta.env.VITE_SITE_URL || "https://www.mathsbodhi.in";
     const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
     const imageUrl = new URL(imagePath, siteUrl).toString();
     const schemaItems = Array.isArray(schema) ? schema : [schema];
@@ -42,7 +43,7 @@ export default function Seo({
 
     ensureMeta("description", description);
     ensureMeta("keywords", keywords.join(", "));
-    ensureMeta("robots", "index, follow");
+    ensureMeta("robots", robots);
     ensureMeta("og:type", "website", "property");
     ensureMeta("og:title", title, "property");
     ensureMeta("og:description", description, "property");
@@ -65,7 +66,7 @@ export default function Seo({
     }
 
     schemaScript.textContent = JSON.stringify(schemaItems);
-  }, [canonicalPath, description, imagePath, keywords, schema, title]);
+  }, [canonicalPath, description, imagePath, keywords, robots, schema, title]);
 
   return null;
 }

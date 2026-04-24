@@ -1,0 +1,90 @@
+import mongoose, { Schema, model } from "mongoose";
+
+const seoSchema = new Schema(
+  {
+    title: { type: String, trim: true, default: "" },
+    description: { type: String, trim: true, default: "" },
+    canonicalUrl: { type: String, trim: true, default: "" },
+    keywords: { type: [String], default: [] },
+    ogImage: { type: String, trim: true, default: "" },
+    indexable: { type: Boolean, default: true },
+  },
+  { _id: false },
+);
+
+const faqItemSchema = new Schema(
+  {
+    id: { type: String, default: "" },
+    question: { type: String, trim: true, default: "" },
+    answer: { type: String, trim: true, default: "" },
+  },
+  { _id: false },
+);
+
+const pageSchema = new Schema(
+  {
+    sourceId: { type: String, default: null, unique: true, index: true },
+    pageType: {
+      type: String,
+      enum: ["board", "subject"],
+      required: true,
+      index: true,
+    },
+    pageKey: { type: String, required: true, trim: true, index: true },
+    slug: { type: String, required: true, trim: true, index: true },
+    route: { type: String, required: true, trim: true, unique: true, index: true },
+    label: { type: String, required: true, trim: true },
+    title: { type: String, trim: true, default: "" },
+    navLabel: { type: String, trim: true, default: "" },
+    h1: { type: String, trim: true, required: true },
+    intro: { type: String, trim: true, default: "" },
+    status: {
+      type: String,
+      enum: ["draft", "published", "archived"],
+      default: "draft",
+      index: true,
+    },
+    badge: { type: String, trim: true, default: "" },
+    heroBadge: { type: String, trim: true, default: "" },
+    parentKey: { type: String, trim: true, default: "" },
+    breadcrumbLabel: { type: String, trim: true, default: "" },
+    chips: { type: [String], default: [] },
+    stats: { type: [Schema.Types.Mixed], default: [] },
+    supportPanel: { type: Schema.Types.Mixed, default: {} },
+    overview: { type: Schema.Types.Mixed, default: {} },
+    childSections: { type: [Schema.Types.Mixed], default: [] },
+    detailSections: { type: [Schema.Types.Mixed], default: [] },
+    checklist: { type: [String], default: [] },
+    schoolHighlights: { type: [Schema.Types.Mixed], default: [] },
+    localZones: { type: [Schema.Types.Mixed], default: [] },
+    localDemandZones: { type: [Schema.Types.Mixed], default: [] },
+    cta: { type: Schema.Types.Mixed, default: {} },
+    heroImage: { type: String, trim: true, default: "" },
+    heroImageAlt: { type: String, trim: true, default: "" },
+    featuredTutorIds: { type: [String], default: [] },
+    featuredReviewIds: { type: [String], default: [] },
+    faqItems: { type: [faqItemSchema], default: [] },
+    relatedCities: { type: [String], default: [] },
+    boards: { type: [String], default: [] },
+    topics: { type: [String], default: [] },
+    outcomes: { type: [String], default: [] },
+    learningApproach: { type: [Schema.Types.Mixed], default: [] },
+    classSegments: { type: [Schema.Types.Mixed], default: [] },
+    boardSupportCards: { type: [Schema.Types.Mixed], default: [] },
+    searchIntentChips: { type: [String], default: [] },
+    heroStats: { type: [Schema.Types.Mixed], default: [] },
+    heroSupportTitle: { type: String, trim: true, default: "" },
+    heroSupportText: { type: String, trim: true, default: "" },
+    seoSections: { type: [Schema.Types.Mixed], default: [] },
+    parentChecklist: { type: [String], default: [] },
+    seo: { type: seoSchema, default: () => ({}) },
+  },
+  {
+    timestamps: true,
+  },
+);
+
+pageSchema.index({ pageType: 1, status: 1, updatedAt: -1 });
+pageSchema.index({ pageKey: 1, pageType: 1 });
+
+export const PageModel = mongoose.models.Page || model("Page", pageSchema);
