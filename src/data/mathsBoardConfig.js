@@ -1,6 +1,7 @@
 export const mathsRouteMap = {
   hub: "/subjects/maths",
   cbse: "/subjects/maths/cbse",
+  "icse-isc": "/subjects/maths/icse-isc",
   igcse: "/subjects/maths/igcse",
   ib: "/subjects/maths/ib",
   jee: "/subjects/maths/jee",
@@ -40,7 +41,7 @@ const boardHubFaqs = [
   {
     question: "What if we are comparing more than one maths board?",
     answer:
-      "Use the board cards as the starting point. Each section explains the maths pressure, class range, and tutoring style that usually fits best.",
+      "Use the board cards as the starting point. Each section explains the maths pressure, class range, and tutoring style that usually fits best across CBSE, ICSE and ISC, IGCSE, IB, or JEE maths.",
   },
   {
     question: "Do families still compare sectors after choosing a board?",
@@ -64,6 +65,24 @@ const cbseFaqs = [
     question: "Can parents compare Gurugram areas from this page?",
     answer:
       "Yes. The CBSE page keeps local sector cards visible so families can compare school rhythm with tutor travel and home-tuition convenience.",
+  },
+];
+
+const icseIscFaqs = [
+  {
+    question: "Is this page useful for both ICSE and ISC maths students?",
+    answer:
+      "Yes. It keeps junior and senior-school maths needs together, while still showing where written method, structured support, and senior-school depth matter most.",
+  },
+  {
+    question: "What usually matters most in ICSE or ISC maths support?",
+    answer:
+      "Families often want clearer written presentation, steadier school follow-through, and a tutor who can keep weekly chapter work connected to longer-term exam goals.",
+  },
+  {
+    question: "Can this still help if the student mainly needs school support right now?",
+    answer:
+      "Yes. Many ICSE and ISC families begin with day-to-day school maths support and then widen the plan only when tests, pre-boards, or board papers start to matter more.",
   },
 ];
 
@@ -136,6 +155,24 @@ const cbseSchools = [
     "South City and Sector 45 cluster",
     "Homework and revision rhythm",
     "Relevant for families who want a tutor to keep revision regular, not rushed, across the term.",
+  ),
+];
+
+const icseIscSchools = [
+  school(
+    "Sector 43 and DLF Phase 4 school corridor",
+    "Structured school support",
+    "Useful for families who want regular chapter follow-through, steadier written work, and dependable week-to-week maths discipline.",
+  ),
+  school(
+    "Golf Course Road and Sector 56 cluster",
+    "Senior-school maths rhythm",
+    "A strong fit when ISC learners need more organised revision across algebra, calculus, and longer written questions.",
+  ),
+  school(
+    "South City and Sector 50 belt",
+    "Board-year planning",
+    "Often relevant for families who want school-paper support first and then a calmer move into pre-board or board preparation.",
   ),
 ];
 
@@ -214,6 +251,30 @@ const cbseAreas = [
     "/city/gurugram/sector-45",
     "Useful when families want practical travel coverage, South City access, and regular updates on maths progress.",
     ["South City", "Home tuition"],
+  ),
+];
+
+const icseIscAreas = [
+  area(
+    "School corridor",
+    "Sector 43",
+    "/city/gurugram/sector-43",
+    "Useful for ICSE and ISC families who want stronger written method, regular school support, and practical weekday home tuition.",
+    ["Written method", "School support"],
+  ),
+  area(
+    "School corridor",
+    "Sector 56",
+    "/city/gurugram/sector-56",
+    "Popular with senior-school families looking for steadier maths structure, cleaner revision, and premium-corridor tutor access.",
+    ["ISC senior school", "One-to-one"],
+  ),
+  area(
+    "School corridor",
+    "Sector 50",
+    "/city/gurugram/sector-50",
+    "Often useful when parents want a tutor who can connect chapter learning, test preparation, and board-year planning without making maths feel heavy.",
+    ["Board planning", "Weekly routine"],
   ),
 ];
 
@@ -300,27 +361,28 @@ export const mathsBoardConfig = {
     badge: "Maths by Board",
     title: "Maths Tutors by Board",
     subtitle:
-      "Choose the board first, then move into maths support that fits the student's class level, school setting, and current academic pressure.",
-    metaTitle: "Maths Tutors by Board in Gurugram | CBSE, IGCSE, IB, JEE | Maths Bodhi",
+      "Choose the board first, then move into maths support that fits the student's class level, school setting, and the kind of maths help they need right now.",
+    metaTitle: "Maths Tutors by Board in Gurugram | CBSE, ICSE, IGCSE, IB, JEE | Maths Bodhi",
     metaDescription:
-      "Explore Maths Bodhi's maths-by-board hub for Gurugram with CBSE, IGCSE, IB, and JEE maths support.",
+      "Explore Maths Bodhi's maths-by-board hub for Gurugram with CBSE, ICSE and ISC, IGCSE, IB, and JEE maths support.",
     keywords: [
       "maths tutor by board gurugram",
       "cbse maths tutor gurugram",
+      "icse maths tutor gurugram",
       "igcse maths tutor gurugram",
       "ib maths tutor gurugram",
       "jee maths tutor gurugram",
     ],
-    chips: ["CBSE", "IGCSE", "IB", "JEE"],
+    chips: ["CBSE", "ICSE / ISC", "IGCSE", "IB", "JEE"],
     stats: [
-      { value: "4", label: "Main maths routes" },
+      { value: "5", label: "Main maths routes" },
       { value: "6+", label: "Tutors shown immediately" },
-      { value: "4", label: "Clear board choices" },
+      { value: "3", label: "Shortlisting steps" },
     ],
     supportPanel: {
       title: "Start with the right maths board",
       text:
-        "Parents usually shortlist better once the curriculum is clear. After that, class fit, tutor style, and Gurugram locality become easier to judge.",
+        "Parents usually shortlist better once the curriculum is clear. After that, class fit, tutor style, and Gurugram locality become much easier to judge.",
       bullets: [
         "Choose the board or exam path first",
         "Then compare class level and tutor fit",
@@ -341,6 +403,13 @@ export const mathsBoardConfig = {
           tags: ["Class 6 to 12", "School tests"],
         }),
         card({
+          eyebrow: "ICSE / ISC Maths",
+          title: "Written method, structured support, and senior-school continuity",
+          description:
+            "Useful for families who want clearer presentation, steadier school support, and a smoother move into senior-school maths.",
+          tags: ["ICSE", "ISC"],
+        }),
+        card({
           eyebrow: "IGCSE Maths",
           title: "Written method and paper confidence",
           description:
@@ -348,11 +417,18 @@ export const mathsBoardConfig = {
           tags: ["Core and Extended", "Exam writing"],
         }),
         card({
-          eyebrow: "IB and JEE",
-          title: "Pathway-specific or exam-specific maths mentoring",
+          eyebrow: "IB Maths",
+          title: "Pathway-specific maths support from PYP to DP",
           description:
-            "IB needs the right pathway chosen, while JEE needs the right exam target and problem-solving depth from the start.",
-          tags: ["IB pathways", "JEE routes"],
+            "IB needs the right stage and course path chosen first so maths support can match the student's actual pathway.",
+          tags: ["PYP to DP", "AA and AI"],
+        }),
+        card({
+          eyebrow: "JEE Maths",
+          title: "Exam-oriented problem solving and weekly discipline",
+          description:
+            "JEE students usually need the right exam target, sharper question handling, and better speed-plus-accuracy routines.",
+          tags: ["JEE Main", "JEE Advanced"],
         }),
       ],
     },
@@ -361,7 +437,7 @@ export const mathsBoardConfig = {
       {
         title: "How families usually use the maths hub",
         paragraphs: [
-          "Most parents already know whether the student is in CBSE, IGCSE, IB, or preparing for JEE. What they need next is a quicker way to move into the right maths support style without extra confusion.",
+          "Most parents already know whether the student is in CBSE, ICSE or ISC, IGCSE, IB, or preparing for JEE. What they need next is a quicker way to move into the right maths support style without extra confusion.",
           "That is why this hub stays focused on clear board choices, tutor fit, and Gurugram relevance rather than crowding all pathways into one long page.",
         ],
       },
@@ -374,6 +450,7 @@ export const mathsBoardConfig = {
     ],
     featuredTutorIds: [
       "tutor-cbse-rahul",
+      "tutor-icse-suhani",
       "tutor-igcse-neha",
       "tutor-ib-aarav",
       "tutor-jee-aditya",
@@ -403,12 +480,17 @@ export const mathsBoardConfig = {
         "Often useful for families considering IGCSE or IB support with stronger school awareness.",
       ),
       school(
+        "Sector 43 and DLF Phase 4 corridor",
+        "Structured school-maths follow-through",
+        "Useful for ICSE and ISC families who want steadier written work, practical weekday support, and clearer school-paper routines.",
+      ),
+      school(
         "Sohna Road and Sector 50 school belt",
         "Board-year maths demand",
         "Useful for parents looking for regular worksheet support, revision structure, and Class 9 to 12 maths follow-through.",
       ),
     ],
-    localZones: [...cbseAreas.slice(0, 2), ibAreas[0], jeeAreas[1]],
+    localZones: [cbseAreas[0], icseIscAreas[0], igcseAreas[0], ibAreas[0], jeeAreas[1]],
     faqItems: boardHubFaqs,
     cta: {
       label: "Book a maths consultation",
@@ -511,6 +593,99 @@ export const mathsBoardConfig = {
       label: "Book a CBSE maths demo",
       description:
         "Share the student's class, school, recent test performance, and the chapters that feel weakest. Maths Bodhi can guide the next step on WhatsApp.",
+    },
+  },
+  "icse-isc": {
+    key: "icse-isc",
+    route: mathsRouteMap["icse-isc"],
+    breadcrumbLabel: "ICSE / ISC Maths",
+    parentKey: "hub",
+    label: "ICSE / ISC Maths",
+    navLabel: "ICSE / ISC",
+    badge: "ICSE / ISC Maths",
+    title: "ICSE and ISC maths tuition in Gurugram for structured school support",
+    subtitle:
+      "ICSE and ISC maths support for clearer written method, stronger school follow-through, and steadier senior-school preparation where needed.",
+    metaTitle: "ICSE and ISC Maths Tutors in Gurugram | Maths Bodhi",
+    metaDescription:
+      "Explore ICSE and ISC maths tuition in Gurugram with written-method support, school-fit guidance, and senior-school maths help.",
+    keywords: ["icse maths tutor gurugram", "isc maths tutor gurugram", "icse home tuition gurugram"],
+    chips: ["Class 7 to 10", "ISC senior school", "Written method"],
+    stats: [
+      { value: "2", label: "Main school stages" },
+      { value: "4", label: "Featured tutors" },
+      { value: "3", label: "Popular local areas" },
+    ],
+    supportPanel: {
+      title: "ICSE and ISC maths usually improve with structure",
+      text:
+        "Families often want stronger written presentation, steadier school support, and a tutoring rhythm that keeps chapter learning connected across the term.",
+      bullets: [
+        "Younger classes often need calmer written discipline",
+        "Senior-school maths needs better sequencing and revision",
+        "One-to-one support works best when school rhythm is understood",
+      ],
+    },
+    overview: {
+      badge: "Who this support is for",
+      title: "What ICSE and ISC maths students usually need help with",
+      subtitle:
+        "The strongest support plans keep school expectations, written method, and topic confidence moving together.",
+      cards: [
+        card({
+          eyebrow: "ICSE classes",
+          title: "Written method and school-paper confidence",
+          description:
+            "Useful for students who need cleaner steps, steadier notebooks, and more reliable chapter performance before school tests begin to slip.",
+          tags: ["Class 7 to 10", "Written method"],
+        }),
+        card({
+          eyebrow: "ISC senior school",
+          title: "Senior-school maths with more consistent revision",
+          description:
+            "Helpful when the student needs stronger structure across calculus, algebra, and longer written questions.",
+          tags: ["Class 11 and 12", "Revision"],
+        }),
+        card({
+          eyebrow: "School support",
+          title: "Regular one-to-one maths guidance that stays practical",
+          description:
+            "A good fit for families who want better weekly continuity rather than last-minute maths rescue near exams.",
+          tags: ["One-to-one", "School rhythm"],
+        }),
+      ],
+    },
+    childSections: [],
+    detailSections: [
+      {
+        title: "Why ICSE and ISC families often want structured maths support",
+        paragraphs: [
+          "For many families, the real issue is not one weak chapter. It is that maths starts to feel uneven across notebooks, school tests, homework, and revision. Clearer structure often helps first.",
+          "That is why ICSE and ISC maths support usually works best when the tutor can connect written method, school expectations, and a calmer weekly routine.",
+        ],
+      },
+    ],
+    featuredTutorIds: [
+      "tutor-icse-suhani",
+      "tutor-icse-raghav",
+      "tutor-icse-naina",
+      "tutor-icse-vikram",
+      "tutor-cbse-priyank",
+      "tutor-cbse-kavya",
+    ],
+    featuredReviewIds: [],
+    checklist: [
+      "Check whether the tutor improves written presentation as well as understanding.",
+      "Ask how school tests and chapter practice will connect each week.",
+      "Use location and school corridor only after the academic fit is clear.",
+    ],
+    schoolHighlights: icseIscSchools,
+    localZones: icseIscAreas,
+    faqItems: icseIscFaqs,
+    cta: {
+      label: "Book an ICSE / ISC maths demo",
+      description:
+        "Share the student's class, school, current test pattern, and the maths chapters that feel least steady. Maths Bodhi can guide the next step on WhatsApp.",
     },
   },
   igcse: {

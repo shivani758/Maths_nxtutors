@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useSiteData } from "../../contexts/SiteDataContext";
+import { getTutorProfilePath } from "../../utils/tutorRoutes";
 import { buildTutorInquiryMessage, buildWhatsAppUrl } from "../../utils/whatsapp";
 
 function unique(values = []) {
@@ -109,6 +110,7 @@ function MathsTutorCard({
       {},
     ),
   );
+  const profilePath = profileTo ?? getTutorProfilePath({ id, slug: undefined });
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-sky-100/70 sm:p-6">
@@ -173,7 +175,7 @@ function MathsTutorCard({
       <div className="mt-auto grid gap-3 pt-6 sm:grid-cols-2">
         {profileTo ? (
           <Link
-            to={profileTo}
+            to={profilePath}
             className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 transition hover:border-blue-200 hover:text-blue-700"
           >
             View profile

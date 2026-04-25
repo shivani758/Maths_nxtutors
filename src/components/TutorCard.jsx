@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useSiteData } from "../contexts/SiteDataContext";
+import { getTutorProfilePath } from "../utils/tutorRoutes";
 import { buildTutorInquiryMessage, buildWhatsAppUrl } from "../utils/whatsapp";
 
 function TutorCard({
   id,
+  slug,
   name,
   title,
   rating,
@@ -24,6 +26,7 @@ function TutorCard({
     siteData.contact.whatsappNumber,
     buildTutorInquiryMessage(siteData.contact, { id, name, title }, {}),
   );
+  const profilePath = getTutorProfilePath({ id, slug });
 
   return (
     <article className="group relative overflow-hidden rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg">
@@ -110,7 +113,7 @@ function TutorCard({
 
       <div className="mt-6 flex gap-3">
         <Link
-          to={`/tutor/${id}`}
+          to={profilePath}
           className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-900 transition hover:border-blue-200 hover:text-blue-700"
         >
           View Profile
