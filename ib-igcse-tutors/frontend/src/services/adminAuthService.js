@@ -58,26 +58,13 @@ export async function refreshAdminSession() {
 }
 
 export async function loginAdminSession(credentials) {
-  await apiRequest("/api/auth/login", {
+  return await apiRequest("/api/auth/login", {
     method: "POST",
     body: {
-      identifier: credentials.email || credentials.username || credentials.identifier || "",
-      password: credentials.password || "",
+      email: credentials.email,
+      password: credentials.password,
     },
   });
-  const session = await refreshAdminSession();
-
-  if (!session) {
-    throw new ApiClientError("Login succeeded, but the admin session could not be established.", {
-      status: 500,
-      code: "SESSION_BOOTSTRAP_FAILED",
-    });
-  }
-
-  return {
-    success: true,
-    session,
-  };
 }
 
 export async function logoutAdminSession() {

@@ -21,6 +21,19 @@ export async function authenticateAdmin(identifier: string, password: string) {
   if (!user || !user.active) {
     throw new ApiError(401, "Invalid email or password.", { code: "INVALID_CREDENTIALS" });
   }
+  
+  if (!password || !user.passwordHash) {
+    console.error("DEBUG LOGIN ERROR:", {
+      inputPassword: password,
+      dbPassword: user.passwordHash,
+      user: user.email
+    });
+
+    throw new ApiError(500, "Password missing in DB", {
+      code: "PASSWORD_UNDEFINED",
+    });
+  }
+
 
   const isValidPassword = await verifyPassword(password, user.passwordHash);
 
