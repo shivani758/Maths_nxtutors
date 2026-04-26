@@ -22,14 +22,16 @@ export async function authenticateAdmin(identifier: string, password: string) {
     throw new ApiError(401, "Invalid email or password.", { code: "INVALID_CREDENTIALS" });
   }
 
- if (!password || !user.password) {
+ const hash = user.passwordHash;
+
+if (!password || !hash) {
+  console.error("DEBUG USER:", user);
   throw new ApiError(500, "Password missing in DB", {
     code: "PASSWORD_UNDEFINED",
   });
 }
 
-
- const isValidPassword = await verifyPassword(password, user.password);
+const isValidPassword = await verifyPassword(password, hash);
 
   if (!isValidPassword) {
     throw new ApiError(401, "Invalid email or password.", { code: "INVALID_CREDENTIALS" });
