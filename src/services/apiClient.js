@@ -18,39 +18,17 @@ export class ApiClientError extends Error {
   }
 }
 
-export async function apiRequest(path, options = {}) {
-  const response = await fetch(buildUrl(path), {
-    method: options.method ?? "GET",
-    credentials: "include",
-    cache: options.cache,
+export async function apiRequest(url, options = {}) {
+  const response = await fetch(import.meta.env.VITE_API_URL + url, {
+    method: options.method || "GET",
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers ?? {}),
     },
-    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-    signal: options.signal,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+    credentials: "include",
   });
 
-  let payload = null;
-
-  try {
-    payload = await response.json();
-  } catch {
-    payload = null;
-  }
-
-  if (!response.ok || payload?.success === false) {
-    throw new ApiClientError(
-      payload?.error?.message || `Request failed with status ${response.status}.`,
-      {
-        status: response.status,
-        code: payload?.error?.code,
-        details: payload?.error?.details,
-      },
-    );
-  }
-
-  return payload?.data;
+  return response.json();
 }
 
 export function isApiUnavailableError(error) {
