@@ -224,7 +224,7 @@ function TutorsListPage() {
       <ConfirmDialog
         open={Boolean(itemToDelete)}
         title="Delete tutor?"
-        description="This removes the tutor and linked mock profile details from the frontend store."
+        description="This removes the tutor record from the connected backend."
         confirmLabel="Delete tutor"
         onConfirm={handleDelete}
         onCancel={() => setItemToDelete(null)}

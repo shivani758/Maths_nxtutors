@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createId } from "../../data/admin/seedUtils";
+import { createId } from "../../services/clientDataUtils";
 import { createMediaFromFile, deleteMedia, listMedia, saveMedia } from "../../services/mediaService";
 import AdminCollectionPage from "../components/AdminCollectionPage";
 import { StatusBadge } from "../components/primitives";

@@ -92,8 +92,14 @@ function toTutorPayload(bundle) {
 }
 
 export async function listTutors() {
-  const items = await apiRequest("/api/admin/tutors");
-  return (Array.isArray(items) ? items : []).map((item) => toFlatTutor(item));
+  try {
+    const data = await apiRequest("/api/admin/tutors");
+    console.log("Tutors API:", data);
+    return (Array.isArray(data) ? data : []).map((item) => toFlatTutor(item));
+  } catch (error) {
+    console.error("Tutors API failed:", error);
+    return [];
+  }
 }
 
 export async function getTutorById(id) {

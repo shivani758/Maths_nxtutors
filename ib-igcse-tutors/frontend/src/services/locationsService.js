@@ -1,4 +1,4 @@
-import { createId, createTimestamp } from "../data/admin/seedUtils";
+import { createId, createTimestamp } from "./clientDataUtils";
 import { commitMockStore, getMockStoreSnapshot, removeById, upsertById } from "./mockCmsStore";
 
 export async function listCities() {

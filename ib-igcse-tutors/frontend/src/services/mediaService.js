@@ -1,4 +1,4 @@
-import { createId, createTimestamp } from "../data/admin/seedUtils";
+import { createId, createTimestamp } from "./clientDataUtils";
 import { commitMockStore, getMockStoreSnapshot, removeById, upsertById } from "./mockCmsStore";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/svg+xml", "image/webp"];

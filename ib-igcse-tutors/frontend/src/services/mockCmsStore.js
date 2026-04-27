@@ -1,37 +1,116 @@
-import { createInitialAdminStore } from "../data/admin";
-import { cloneValue, createId } from "../data/admin/seedUtils";
+import { cloneValue, createId } from "./clientDataUtils";
 
 const STORAGE_KEY = "maths-bodhi-admin-mock-store:v2";
 const EVENT_NAME = "maths-bodhi-admin-store-change";
+
+const DEFAULT_SETTINGS = {
+  siteName: "Maths Bodhi",
+  supportEmail: "support@mathsbodhi.in",
+  whatsappNumber: "919896825986",
+  phoneDisplay: "+91 9896825986",
+  footerLinks: [],
+  contact: {
+    phoneDisplay: "+91 9896825986",
+    whatsappNumber: "919896825986",
+    email: "support@mathsbodhi.in",
+    supportHours: "Mon to Sat, 9 AM to 8 PM",
+    city: "Gurugram",
+    state: "Haryana",
+    country: "India",
+  },
+  socialLinks: {},
+  analyticsIds: {},
+  branding: {
+    logoMark: "/favicon.svg",
+    defaultHeroImage: "/images/hero-maths-home.svg",
+  },
+  seo: {
+    title: "Maths Bodhi",
+    description: "Maths Bodhi tutoring support.",
+    canonicalUrl: "",
+    keywords: [],
+    ogImage: "/images/hero-maths-home.svg",
+    indexable: true,
+  },
+  homepage: {
+    eyebrow: "Maths Home Tuition",
+    heroTitle: "Find the right maths tutor",
+    heroSubtitle: "Tutors, reviews, and location content load from the backend when available.",
+    keywordChips: [],
+    stats: [],
+    serviceBullets: [],
+    intentTitle: "",
+    intentParagraphs: [],
+    goalTitle: "",
+    goalParagraphs: [],
+  },
+  premiumSchools: [],
+};
+
+function createEmptyAdminStore() {
+  const timestamp = new Date().toISOString();
+
+  return cloneValue({
+    meta: {
+      version: 3,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    },
+    tutors: [],
+    tutorProfiles: [],
+    reviews: [],
+    results: [],
+    blogs: [],
+    pages: [],
+    faqs: [],
+    cities: [],
+    localities: [],
+    media: [],
+    users: [],
+    settings: DEFAULT_SETTINGS,
+    dashboardActivity: [],
+  });
+}
 
 function hasBrowser() {
   return typeof window !== "undefined";
 }
 
-function mergeSettings(seedSettings, savedSettings = {}) {
+function mergeSettings(seedSettings = DEFAULT_SETTINGS, savedSettings = {}) {
+  const saved = savedSettings ?? {};
+
   return {
     ...seedSettings,
-    ...savedSettings,
+    ...saved,
     contact: {
       ...seedSettings.contact,
-      ...savedSettings.contact,
+      ...saved.contact,
     },
     seo: {
       ...seedSettings.seo,
-      ...savedSettings.seo,
-      keywords: savedSettings.seo?.keywords ?? seedSettings.seo.keywords,
+      ...saved.seo,
+      keywords: saved.seo?.keywords ?? seedSettings.seo.keywords,
     },
     homepage: {
       ...seedSettings.homepage,
-      ...savedSettings.homepage,
-      keywordChips: savedSettings.homepage?.keywordChips ?? seedSettings.homepage.keywordChips,
-      stats: savedSettings.homepage?.stats ?? seedSettings.homepage.stats,
-      serviceBullets:
-        savedSettings.homepage?.serviceBullets ?? seedSettings.homepage.serviceBullets,
-      intentParagraphs:
-        savedSettings.homepage?.intentParagraphs ?? seedSettings.homepage.intentParagraphs,
-      goalParagraphs:
-        savedSettings.homepage?.goalParagraphs ?? seedSettings.homepage.goalParagraphs,
+      ...saved.homepage,
+      keywordChips: saved.homepage?.keywordChips ?? seedSettings.homepage.keywordChips,
+      stats: saved.homepage?.stats ?? seedSettings.homepage.stats,
+      serviceBullets: saved.homepage?.serviceBullets ?? seedSettings.homepage.serviceBullets,
+      intentParagraphs: saved.homepage?.intentParagraphs ?? seedSettings.homepage.intentParagraphs,
+      goalParagraphs: saved.homepage?.goalParagraphs ?? seedSettings.homepage.goalParagraphs,
+    },
+    branding: {
+      ...seedSettings.branding,
+      ...saved.branding,
+    },
+    socialLinks: {
+      ...seedSettings.socialLinks,
+      ...saved.socialLinks,
+    },
+    analyticsIds: {
+      ...seedSettings.analyticsIds,
+      ...saved.analyticsIds,
     },
   };
 }
@@ -70,7 +149,7 @@ function persistStore(store) {
 }
 
 export function getMockStoreSnapshot() {
-  const seedStore = createInitialAdminStore();
+  const seedStore = createEmptyAdminStore();
 
   if (!hasBrowser()) {
     return seedStore;
@@ -78,7 +157,7 @@ export function getMockStoreSnapshot() {
 
   try {
     const savedStore = JSON.parse(window.localStorage.getItem(STORAGE_KEY));
-    return mergeStore(seedStore, savedStore);
+    return mergeStore(seedStore, savedStore ?? {});
   } catch {
     return seedStore;
   }
@@ -136,7 +215,7 @@ export function commitMockStore(mutator, activity) {
 }
 
 export function resetMockStore() {
-  const freshStore = createInitialAdminStore();
+  const freshStore = createEmptyAdminStore();
   persistStore(freshStore);
   return freshStore;
 }
