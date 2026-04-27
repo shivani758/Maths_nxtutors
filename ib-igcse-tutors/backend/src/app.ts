@@ -15,6 +15,12 @@ import studentResultRoutes from "./routes/admin/studentResultRoutes.js";
 import tutorRoutes from "./routes/admin/tutorRoutes.js";
 import portalAuthRoutes from "./routes/portalAuthRoutes.js";
 import publicRoutes from "./routes/publicRoutes.js";
+import {
+  listPublicBlogsController,
+  listPublicReviewsController,
+  listPublicTutorsController,
+} from "./controllers/publicController.js";
+import { asyncHandler } from "./utils/asyncHandler.js";
 
 export function createApp() {
   const app = express();
@@ -56,6 +62,9 @@ export function createApp() {
   app.use("/api/auth", authRoutes);
   app.use("/api/portal-auth", portalAuthRoutes);
   app.use("/api/public", publicRoutes);
+  app.get("/api/tutors", asyncHandler(listPublicTutorsController));
+  app.get("/api/blogs", asyncHandler(listPublicBlogsController));
+  app.get("/api/reviews", asyncHandler(listPublicReviewsController));
   app.use("/api/admin/dashboard", requireAuth, dashboardRoutes);
   app.use("/api/admin/tutors", requireRole(["super_admin", "admin", "editor"]), tutorRoutes);
   app.use("/api/admin/blogs", requireRole(["super_admin", "admin", "editor"]), blogRoutes);

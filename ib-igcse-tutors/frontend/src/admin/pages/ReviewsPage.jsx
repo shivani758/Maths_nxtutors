@@ -17,13 +17,16 @@ function ReviewsPage() {
     let mounted = true;
 
     async function loadResources() {
-      const [tutors, pages] = await Promise.all([listTutors(), listPages()]);
+      const [tutorsResult, pagesResult] = await Promise.allSettled([listTutors(), listPages()]);
 
       if (!mounted) {
         return;
       }
 
-      setResources({ tutors, pages });
+      setResources({
+        tutors: tutorsResult.status === "fulfilled" && Array.isArray(tutorsResult.value) ? tutorsResult.value : [],
+        pages: pagesResult.status === "fulfilled" && Array.isArray(pagesResult.value) ? pagesResult.value : [],
+      });
       setLoadingResources(false);
     }
 

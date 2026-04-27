@@ -20,4 +20,13 @@ export async function getPublicBootstrapController(_req, res) {
         pages,
     });
 }
+export async function listPublicTutorsController(_req, res) {
+    return sendOk(res, await getPublicTutors());
+}
+export async function listPublicBlogsController(_req, res) {
+    return sendOk(res, await getPublishedBlogs());
+}
+export async function listPublicReviewsController(_req, res) {
+    return sendOk(res, await getApprovedReviews());
+}
 //# sourceMappingURL=publicController.js.map

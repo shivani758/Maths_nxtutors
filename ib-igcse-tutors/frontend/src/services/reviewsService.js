@@ -6,7 +6,8 @@ function uniqueValues(values = []) {
 }
 
 export async function listReviews() {
-  return apiRequest("/api/admin/reviews");
+  const items = await apiRequest("/api/admin/reviews");
+  return Array.isArray(items) ? items : [];
 }
 
 export async function getReviewById(id) {

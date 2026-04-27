@@ -23,3 +23,15 @@ export async function getPublicBootstrapController(_req: Request, res: Response)
     pages,
   });
 }
+
+export async function listPublicTutorsController(_req: Request, res: Response) {
+  return sendOk(res, await getPublicTutors());
+}
+
+export async function listPublicBlogsController(_req: Request, res: Response) {
+  return sendOk(res, await getPublishedBlogs());
+}
+
+export async function listPublicReviewsController(_req: Request, res: Response) {
+  return sendOk(res, await getApprovedReviews());
+}

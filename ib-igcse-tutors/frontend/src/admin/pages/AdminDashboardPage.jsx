@@ -14,7 +14,9 @@ function AdminDashboardPage() {
     return <EmptyState title="Unable to load dashboard" description={error} />;
   }
 
-  const snapshot = dashboard;
+  const snapshot = dashboard ?? {};
+  const summaryCards = snapshot.summaryCards ?? [];
+  const recentActivity = snapshot.recentActivity ?? [];
 
   return (
     <div className="space-y-6">
@@ -25,7 +27,7 @@ function AdminDashboardPage() {
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {snapshot.summaryCards.map((card) => (
+        {summaryCards.map((card) => (
           <AdminStatCard
             key={card.label}
             label={card.label}
@@ -34,6 +36,17 @@ function AdminDashboardPage() {
           />
         ))}
       </div>
+
+      {snapshot.isEmpty ? (
+        <EmptyState
+          title="No dashboard data yet"
+          description={
+            snapshot.loadErrors?.length
+              ? "The dashboard could not reach one or more backend collections, so it is showing an empty state for now."
+              : "Tutors, blogs, and reviews will appear here as soon as records are available from the backend."
+          }
+        />
+      ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
         <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
@@ -60,7 +73,12 @@ function AdminDashboardPage() {
             Recent tutor and blog updates help the team keep track of the first connected content modules.
           </p>
           <div className="mt-6 space-y-3">
-            {snapshot.recentActivity.map((activity) => (
+            {!recentActivity.length ? (
+              <p className="border-t border-dashed border-slate-200 pt-4 text-sm leading-7 text-slate-600">
+                New tutor, blog, and review updates will be listed here after content is available.
+              </p>
+            ) : null}
+            {recentActivity.map((activity) => (
               <article
                 key={activity.id}
                 className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4"

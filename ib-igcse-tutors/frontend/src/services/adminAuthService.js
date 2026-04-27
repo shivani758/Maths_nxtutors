@@ -58,13 +58,20 @@ export async function refreshAdminSession() {
 }
 
 export async function loginAdminSession(credentials) {
-  return await apiRequest("/api/auth/login", {
+  const payload = await apiRequest("/api/auth/login", {
     method: "POST",
     body: {
       email: credentials.email,
       password: credentials.password,
     },
   });
+  cachedSession = toSessionPayload(payload);
+  emitSessionChange();
+
+  return {
+    success: Boolean(cachedSession),
+    session: cachedSession,
+  };
 }
 
 export async function logoutAdminSession() {

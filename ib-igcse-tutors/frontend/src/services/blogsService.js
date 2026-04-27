@@ -20,7 +20,8 @@ function inferRelatedBoards(blog) {
 }
 
 export async function listBlogs() {
-  return apiRequest("/api/admin/blogs");
+  const items = await apiRequest("/api/admin/blogs");
+  return Array.isArray(items) ? items : [];
 }
 
 export async function getBlogById(id) {
