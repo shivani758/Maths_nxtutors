@@ -1,6 +1,5 @@
 import { citySeeds, localitySeeds } from "./locationsSeed";
 import { cloneValue, createTimestamp } from "./seedUtils";
-import { citySeeds, localitySeeds } from "./locationsSeed";
 import { dashboardActivitySeeds, mediaSeeds, userSeeds } from "./mediaUsersSeed";
 import { blogSeeds, faqSeeds, pageSeeds } from "./pagesSeed";
 import { resultSeeds, reviewSeeds } from "./reviewsSeed";
