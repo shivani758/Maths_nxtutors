@@ -5,22 +5,58 @@ const SiteDataContext = createContext(null);
 
 export function SiteDataProvider({ children }) {
   const [siteData, setSiteData] = useState(getSiteDataSnapshot);
+  const [isSiteDataLoading, setIsSiteDataLoading] = useState(true);
+  const [siteDataError, setSiteDataError] = useState("");
 
   useEffect(() => {
+    let isMounted = true;
     const unsubscribe = subscribeSiteData(setSiteData);
-    refreshPublicSiteData().catch(() => {});
-    return unsubscribe;
+
+    async function loadSiteData() {
+      setIsSiteDataLoading(true);
+      try {
+        await refreshPublicSiteData();
+        if (isMounted) {
+          setSiteData(getSiteDataSnapshot());
+          setSiteDataError("");
+        }
+      } catch (error) {
+        if (isMounted) {
+          setSiteData(getSiteDataSnapshot());
+          setSiteDataError(error?.message || "Unable to load public site data.");
+        }
+      } finally {
+        if (isMounted) {
+          setIsSiteDataLoading(false);
+        }
+      }
+    }
+
+    loadSiteData();
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const value = useMemo(
     () => ({
       siteData,
+      isSiteDataLoading,
+      siteDataError,
       refreshSiteData: async () => {
-        await refreshPublicSiteData().catch(() => {});
+        setIsSiteDataLoading(true);
+        await refreshPublicSiteData().then(() => {
+          setSiteDataError("");
+        }).catch((error) => {
+          setSiteDataError(error?.message || "Unable to load public site data.");
+        });
         setSiteData(getSiteDataSnapshot());
+        setIsSiteDataLoading(false);
       },
     }),
-    [siteData],
+    [isSiteDataLoading, siteData, siteDataError],
   );
 
   return <SiteDataContext.Provider value={value}>{children}</SiteDataContext.Provider>;

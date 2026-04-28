@@ -4,7 +4,7 @@ import { listCities } from "../../services/locationsService";
 import { listMedia } from "../../services/mediaService";
 import { createEmptyPage, getPageById, savePage } from "../../services/pagesService";
 import { listReviews } from "../../services/reviewsService";
-import { listTutors } from "../../services/tutorsService";
+import { listAdminTutors as listTutors } from "../../services/tutorsService";
 import { AdminPageHeader, EmptyState, LoadingPanel } from "../components/primitives";
 import PageForm from "../forms/PageForm";
 import {

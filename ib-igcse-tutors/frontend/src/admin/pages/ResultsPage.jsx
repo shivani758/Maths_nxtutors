@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { listCities, listLocalities } from "../../services/locationsService";
 import { listPages } from "../../services/pagesService";
 import { createEmptyResult, deleteResult, listResults, saveResult } from "../../services/resultsService";
-import { listTutors } from "../../services/tutorsService";
+import { listAdminTutors as listTutors } from "../../services/tutorsService";
 import AdminCollectionPage from "../components/AdminCollectionPage";
 import { LoadingPanel, StatusBadge } from "../components/primitives";
 import { ResultForm } from "../forms/simpleForms";

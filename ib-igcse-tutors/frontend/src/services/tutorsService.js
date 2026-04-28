@@ -93,11 +93,20 @@ function toTutorPayload(bundle) {
 
 export async function listTutors() {
   try {
+    const data = await apiRequest("/api/tutors");
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Public tutors API failed:", error);
+    return [];
+  }
+}
+
+export async function listAdminTutors() {
+  try {
     const data = await apiRequest("/api/admin/tutors");
-    console.log("Tutors API:", data);
     return (Array.isArray(data) ? data : []).map((item) => toFlatTutor(item));
   } catch (error) {
-    console.error("Tutors API failed:", error);
+    console.error("Admin tutors API failed:", error);
     return [];
   }
 }

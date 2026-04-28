@@ -1,14 +1,35 @@
 import { createId, createTimestamp } from "./clientDataUtils";
-import { commitMockStore, getMockStoreSnapshot, removeById, upsertById } from "./mockCmsStore";
+
+const cities = [];
+const localities = [];
+
+function upsertById(collection, entity) {
+  const index = collection.findIndex((item) => item.id === entity.id);
+
+  if (index === -1) {
+    collection.push(entity);
+    return;
+  }
+
+  collection[index] = entity;
+}
+
+function removeById(collection, id) {
+  const index = collection.findIndex((item) => item.id === id);
+
+  if (index !== -1) {
+    collection.splice(index, 1);
+  }
+}
 
 export async function listCities() {
-  return [...getMockStoreSnapshot().cities].sort((first, second) =>
+  return [...cities].sort((first, second) =>
     String(first.label ?? "").localeCompare(String(second.label ?? "")),
   );
 }
 
 export async function listLocalities() {
-  return [...getMockStoreSnapshot().localities].sort((first, second) =>
+  return [...localities].sort((first, second) =>
     String(first.sectorLabel ?? "").localeCompare(String(second.sectorLabel ?? "")),
   );
 }
@@ -76,69 +97,41 @@ export async function createEmptyLocality() {
 }
 
 export async function saveCity(city) {
-  return commitMockStore((draft) => {
-    const existingCity = draft.cities.find((item) => item.id === city.id);
-    const nextCity = {
-      ...existingCity,
-      ...city,
-      id: city.id || createId("city", city.slug || city.label),
-      createdAt: existingCity?.createdAt ?? createTimestamp(1),
-      updatedAt: new Date().toISOString(),
-    };
+  const existingCity = cities.find((item) => item.id === city.id);
+  const nextCity = {
+    ...existingCity,
+    ...city,
+    id: city.id || createId("city", city.slug || city.label),
+    createdAt: existingCity?.createdAt ?? createTimestamp(1),
+    updatedAt: new Date().toISOString(),
+  };
 
-    draft.cities = upsertById(draft.cities, nextCity);
-    return nextCity;
-  }, {
-    module: "Cities",
-    action: city.id ? "Updated city" : "Created city",
-    entityId: city.id || city.slug || city.label,
-    entityLabel: city.label,
-  });
+  upsertById(cities, nextCity);
+  return nextCity;
 }
 
 export async function saveLocality(locality) {
-  return commitMockStore((draft) => {
-    const existingLocality = draft.localities.find((item) => item.id === locality.id);
-    const nextLocality = {
-      ...existingLocality,
-      ...locality,
-      id: locality.id || createId("locality", `${locality.citySlug}-${locality.slug || locality.sectorLabel}`),
-      createdAt: existingLocality?.createdAt ?? createTimestamp(1),
-      updatedAt: new Date().toISOString(),
-    };
+  const existingLocality = localities.find((item) => item.id === locality.id);
+  const nextLocality = {
+    ...existingLocality,
+    ...locality,
+    id: locality.id || createId("locality", `${locality.citySlug}-${locality.slug || locality.sectorLabel}`),
+    createdAt: existingLocality?.createdAt ?? createTimestamp(1),
+    updatedAt: new Date().toISOString(),
+  };
 
-    draft.localities = upsertById(draft.localities, nextLocality);
-    return nextLocality;
-  }, {
-    module: "Localities",
-    action: locality.id ? "Updated locality" : "Created locality",
-    entityId: locality.id || locality.slug || locality.sectorLabel,
-    entityLabel: locality.sectorLabel,
-  });
+  upsertById(localities, nextLocality);
+  return nextLocality;
 }
 
 export async function deleteCity(id) {
-  return commitMockStore((draft) => {
-    const existingCity = draft.cities.find((item) => item.id === id);
-    draft.cities = removeById(draft.cities, id);
-    return existingCity ?? null;
-  }, {
-    module: "Cities",
-    action: "Deleted city",
-    entityId: id,
-    entityLabel: id,
-  });
+  const existingCity = cities.find((item) => item.id === id);
+  removeById(cities, id);
+  return existingCity ?? null;
 }
 
 export async function deleteLocality(id) {
-  return commitMockStore((draft) => {
-    const existingLocality = draft.localities.find((item) => item.id === id);
-    draft.localities = removeById(draft.localities, id);
-    return existingLocality ?? null;
-  }, {
-    module: "Localities",
-    action: "Deleted locality",
-    entityId: id,
-    entityLabel: id,
-  });
+  const existingLocality = localities.find((item) => item.id === id);
+  removeById(localities, id);
+  return existingLocality ?? null;
 }

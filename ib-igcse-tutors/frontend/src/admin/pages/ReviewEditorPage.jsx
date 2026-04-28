@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { listPages } from "../../services/pagesService";
 import { createEmptyReview, saveReview } from "../../services/reviewsService";
-import { listTutors } from "../../services/tutorsService";
+import { listAdminTutors as listTutors } from "../../services/tutorsService";
 import { AdminPageHeader, LoadingPanel } from "../components/primitives";
 import { ReviewForm } from "../forms/simpleForms";
 import { useAdminToast } from "../providers/AdminToastContext";

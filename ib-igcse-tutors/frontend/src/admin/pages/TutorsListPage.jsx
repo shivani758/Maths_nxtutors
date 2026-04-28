@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { deleteTutor, listTutors, toggleTutorFeatured, toggleTutorStatus } from "../../services/tutorsService";
+import { deleteTutor, listAdminTutors as listTutors, toggleTutorFeatured, toggleTutorStatus } from "../../services/tutorsService";
 import { useAdminCollection } from "../hooks/useAdminCollection";
 import {
   ActionButton,

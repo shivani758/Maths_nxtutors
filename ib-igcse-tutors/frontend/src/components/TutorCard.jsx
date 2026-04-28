@@ -12,7 +12,7 @@ function TutorCard({
   experience,
   board,
   classLevel,
-  topics,
+  topics = [],
   price,
   sectors = [],
   mode = [],

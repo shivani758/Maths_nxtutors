@@ -2,7 +2,7 @@ export {
   createEmptyTutor,
   deleteTutor,
   getTutorById,
-  listTutors,
+  listAdminTutors as listTutors,
   reorderTutors,
   saveTutorBundle,
   toggleTutorFeatured,

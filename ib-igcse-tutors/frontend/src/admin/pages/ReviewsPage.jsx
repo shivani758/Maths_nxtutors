@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { listPages } from "../../services/pagesService";
 import { createEmptyReview, deleteReview, listReviews, saveReview } from "../../services/reviewsService";
-import { listTutors } from "../../services/tutorsService";
+import { listAdminTutors as listTutors } from "../../services/tutorsService";
 import AdminCollectionPage from "../components/AdminCollectionPage";
 import { LoadingPanel, StatusBadge } from "../components/primitives";
 import { ReviewForm } from "../forms/simpleForms";

@@ -1,24 +1,23 @@
 import { connectDatabase, disconnectDatabase } from "../config/db.js";
 import { env } from "../config/env.js";
 import { ensureSeedAdmin } from "../services/authService.js";
-import { importFrontendSeeds } from "./importFrontendSeeds.js";
+
+function createEmptySeedStore() {
+  return {
+    tutors: [],
+    tutorProfiles: [],
+    blogs: [],
+    reviews: [],
+    results: [],
+    pages: [],
+    faqs: [],
+  };
+}
 
 async function runSeed() {
   await connectDatabase();
 
-  const frontendSeedModulePath = "../../../frontend/src/data/admin/index.js";
-  const { createInitialAdminStore } = (await import(frontendSeedModulePath)) as {
-    createInitialAdminStore: () => {
-      tutors: Array<Record<string, any>>;
-      tutorProfiles: Array<Record<string, any>>;
-      blogs: Array<Record<string, any>>;
-      reviews: Array<Record<string, any>>;
-      results: Array<Record<string, any>>;
-      pages: Array<Record<string, any>>;
-      faqs: Array<Record<string, any>>;
-    };
-  };
-  const seedStore = createInitialAdminStore();
+  const seedStore = createEmptySeedStore();
 
   await ensureSeedAdmin({
     name: env.ADMIN_SEED_NAME,
@@ -26,8 +25,6 @@ async function runSeed() {
     password: env.ADMIN_SEED_PASSWORD,
     role: "super_admin",
   });
-
-  await importFrontendSeeds(seedStore);
 
   console.log("Maths Bodhi seed completed successfully.");
   console.log(

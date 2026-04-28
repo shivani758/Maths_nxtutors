@@ -6,6 +6,7 @@ import TutorCard from "../components/TutorCard";
 import { useSiteData } from "../contexts/SiteDataContext";
 import { getMathsHomeCards, mathsRouteMap } from "../data/mathsBoardPages";
 import MainLayout from "../layouts/MainLayout";
+import { listTutors } from "../services/tutorsService";
 import { getTutorProfilePath } from "../utils/tutorRoutes";
 import { buildWhatsAppUrl } from "../utils/whatsapp";
 
@@ -154,6 +155,46 @@ function toAbsoluteUrl(siteUrl, path) {
   return `${siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+function getList(value) {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+function getFirstListValue(values, fallback) {
+  return getList(values)[0] ?? fallback;
+}
+
+function toTutorCardData(tutor) {
+  const boards = getList(tutor.boards);
+  const classesSupported = getList(tutor.classesSupported);
+  const topics = getList(tutor.topics);
+  const localities = getList(tutor.localities?.length ? tutor.localities : tutor.sectors);
+  const serviceModes = getList(tutor.serviceModes?.length ? tutor.serviceModes : tutor.mode);
+  const schoolFocus = getList(tutor.schoolFocus);
+  const experience = tutor.experience ?? tutor.experienceLabel ?? "";
+
+  return {
+    ...tutor,
+    id: tutor.id,
+    slug: tutor.slug,
+    name: tutor.name,
+    title: tutor.title ?? "Math Tutor",
+    rating: String(tutor.rating ?? "0"),
+    experience,
+    board: getFirstListValue(boards, tutor.board ?? "Maths"),
+    classLevel: getFirstListValue(classesSupported, tutor.classLevel ?? "Flexible support"),
+    location: tutor.location ?? getFirstListValue(tutor.cities, "Gurugram"),
+    sectors: localities,
+    topics,
+    price: tutor.startingFee ?? tutor.price ?? "Shared on enquiry",
+    mode: serviceModes,
+    schoolFocus,
+    image: tutor.image || "/images/hero-maths-home.svg",
+    imageAlt: tutor.imageAlt || `${tutor.name} maths tutor profile`,
+    shortBio: tutor.shortBio ?? tutor.summary ?? "",
+    summary: tutor.summary ?? tutor.shortBio ?? "",
+  };
+}
+
 function buildLocalSearchItems(sectorPages, premiumSchools) {
   const sectorItems = sectorPages.slice(0, 8).map((sector) => ({
     label: `Maths tutor in ${sector.sectorLabel}`,
@@ -235,8 +276,10 @@ function buildLocalContextCards(premiumSchools, sectorPages, tutors) {
 
 function Home() {
   const { siteData } = useSiteData();
-  const { seo, home, contact, tutors, reviews, premiumSchools, sectorPages } = siteData;
+  const { seo, home, contact, reviews, premiumSchools, sectorPages } = siteData;
 
+  const [apiTutors, setApiTutors] = useState([]);
+  const [tutorsLoading, setTutorsLoading] = useState(true);
   const [selectedClass, setSelectedClass] = useState("All Classes");
   const [selectedSector, setSelectedSector] = useState("All Sectors");
   const [selectedBoard, setSelectedBoard] = useState("All Boards");
@@ -246,6 +289,35 @@ function Home() {
   const [visibleReviews, setVisibleReviews] = useState(10);
   const [visibleSectors, setVisibleSectors] = useState(6);
   const [openFaq, setOpenFaq] = useState(0);
+  const tutors = apiTutors.length ? apiTutors : siteData.tutors;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadTutors() {
+      setTutorsLoading(true);
+      try {
+        const data = await listTutors();
+        if (isMounted) {
+          setApiTutors(data.map((tutor) => toTutorCardData(tutor)));
+        }
+      } catch {
+        if (isMounted) {
+          setApiTutors([]);
+        }
+      } finally {
+        if (isMounted) {
+          setTutorsLoading(false);
+        }
+      }
+    }
+
+    loadTutors();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const classOptions = useMemo(() => {
     const classes = [...new Set(tutors.map((tutor) => tutor.classLevel))].sort(
@@ -419,14 +491,11 @@ function Home() {
                 item: {
                   "@type": "Person",
                   name: tutor.name,
-                  jobTitle: tutor.title,
-                  description: tutor.summary,
+                  jobTitle: "Math Tutor",
+                  description: tutor.shortBio ?? tutor.summary,
                   image: toAbsoluteUrl(siteUrl, tutor.image),
                   knowsAbout: [tutor.board, ...(tutor.topics ?? []).slice(0, 3)],
-                  worksFor: {
-                    "@type": "Organization",
-                    name: siteData.brandName,
-                  },
+                  worksFor: "Maths Bodhi",
                 },
               })),
             },
@@ -742,12 +811,15 @@ function Home() {
                   Compare tutors that match your current filters
                 </h2>
                 <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600 md:text-lg">
-                  Showing {visibleTutorCards.length} of {cappedTutorMatches.length} tutor
-                  {cappedTutorMatches.length === 1 ? "" : "s"} for{" "}
-                  {activeTutorFilters.length
-                    ? activeTutorFilters.join(", ")
-                    : "all classes, boards, local areas, support types, and topics"}
-                  .
+                  {tutorsLoading
+                    ? "Loading live tutor profiles from the backend."
+                    : `Showing ${visibleTutorCards.length} of ${cappedTutorMatches.length} tutor${
+                        cappedTutorMatches.length === 1 ? "" : "s"
+                      } for ${
+                        activeTutorFilters.length
+                          ? activeTutorFilters.join(", ")
+                          : "all classes, boards, local areas, support types, and topics"
+                      }.`}
                 </p>
               </div>
 
@@ -789,7 +861,16 @@ function Home() {
                 ))}
             </div>
 
-            {visibleTutorCards.length ? (
+            {tutorsLoading ? (
+              <div className="mt-8 grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }, (_, index) => (
+                  <div
+                    key={`tutor-loading-${index}`}
+                    className="h-80 animate-pulse rounded-[24px] border border-slate-200 bg-slate-50"
+                  />
+                ))}
+              </div>
+            ) : visibleTutorCards.length ? (
               <>
                 <div className="mt-8 grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
                   {visibleTutorCards.map((tutor) => (

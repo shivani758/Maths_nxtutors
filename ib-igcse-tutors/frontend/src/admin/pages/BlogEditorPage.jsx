@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { createEmptyBlog, getBlogById, saveBlog } from "../../services/blogsService";
 import { listMedia } from "../../services/mediaService";
 import { listPages } from "../../services/pagesService";
-import { listTutors } from "../../services/tutorsService";
+import { listAdminTutors as listTutors } from "../../services/tutorsService";
 import { AdminPageHeader, EmptyState, LoadingPanel } from "../components/primitives";
 import BlogForm from "../forms/BlogForm";
 import {

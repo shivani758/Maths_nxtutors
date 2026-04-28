@@ -1,11 +1,8 @@
 import { Types } from "mongoose";
 import { PageModel } from "../models/Page.js";
-import { ReviewModel } from "../models/Review.js";
-import { TutorModel } from "../models/Tutor.js";
 import { ApiError } from "../utils/ApiError.js";
 import { slugify } from "../utils/slug.js";
 import { createFieldErrorDetails } from "../utils/validationDetails.js";
-let seedPromise = null;
 function unique(values = []) {
     return [...new Set(values.filter(Boolean))];
 }
@@ -119,93 +116,8 @@ async function ensureUniqueRoute(route, sourceId) {
         });
     }
 }
-async function seedPagesFromFrontendStore() {
-    const frontendSeedModulePath = "../../../frontend/src/data/admin/index.js";
-    const { createInitialAdminStore } = (await import(frontendSeedModulePath));
-    const seedStore = createInitialAdminStore();
-    const faqById = new Map((seedStore.faqs ?? []).map((faq) => [faq.id, faq]));
-    const tutorIdMap = new Map((await TutorModel.find({}, { _id: 1, sourceId: 1 }).lean().exec()).map((item) => [
-        item.sourceId,
-        item._id.toString(),
-    ]));
-    const reviewIdMap = new Map((await ReviewModel.find({}, { _id: 1, sourceId: 1 }).lean().exec()).map((item) => [
-        item.sourceId,
-        item._id.toString(),
-    ]));
-    for (const page of seedStore.pages ?? []) {
-        const pageType = page.pageType === "subject" ? "subject" : "board";
-        const pageKey = normalizePageKey(pageType, page.pageKey || page.slug || "");
-        const slug = pageType === "subject" ? normalizePageKey("subject", page.slug || page.pageKey || "") : pageKey;
-        const route = normalizeRoute(page.route || "", pageType, pageKey, slug);
-        const sourceId = page.id || buildSourceId(pageType, pageKey);
-        const faqItems = (page.faqIds ?? [])
-            .map((faqId) => faqById.get(faqId))
-            .filter(Boolean)
-            .map((faq, index) => ({
-            id: faq.id || `faq-${index + 1}`,
-            question: faq.question ?? "",
-            answer: faq.answer ?? "",
-        }));
-        await PageModel.findOneAndUpdate({ sourceId }, {
-            sourceId,
-            pageType,
-            pageKey,
-            slug,
-            route,
-            label: page.label || page.title || page.h1,
-            title: page.title || page.label || page.h1,
-            navLabel: page.navLabel || page.label || page.title || page.h1,
-            h1: page.h1 || page.title || page.label,
-            intro: page.intro ?? "",
-            status: page.status ?? "draft",
-            badge: page.badge ?? "",
-            heroBadge: page.heroBadge ?? "",
-            parentKey: page.parentKey ?? "",
-            breadcrumbLabel: page.breadcrumbLabel ?? "",
-            chips: page.chips ?? [],
-            stats: page.stats ?? [],
-            supportPanel: page.supportPanel ?? { title: "", text: "", bullets: [] },
-            overview: page.overview ?? { badge: "", title: "", subtitle: "", cards: [] },
-            childSections: page.childSections ?? [],
-            detailSections: page.detailSections ?? [],
-            checklist: page.checklist ?? [],
-            schoolHighlights: page.schoolHighlights ?? [],
-            localZones: page.localZones ?? [],
-            localDemandZones: page.localDemandZones ?? [],
-            cta: page.cta ?? { label: "", description: "" },
-            heroImage: page.heroImage ?? "",
-            heroImageAlt: page.heroImageAlt ?? "",
-            featuredTutorIds: (page.featuredTutorIds ?? []).map((id) => tutorIdMap.get(id) ?? id),
-            featuredReviewIds: (page.featuredReviewIds ?? []).map((id) => reviewIdMap.get(id) ?? id),
-            faqItems,
-            relatedCities: page.relatedCities ?? [],
-            boards: page.boards ?? [],
-            topics: page.topics ?? [],
-            outcomes: page.outcomes ?? [],
-            learningApproach: page.learningApproach ?? [],
-            classSegments: page.classSegments ?? [],
-            boardSupportCards: page.boardSupportCards ?? [],
-            searchIntentChips: page.searchIntentChips ?? [],
-            heroStats: page.heroStats ?? [],
-            heroSupportTitle: page.heroSupportTitle ?? "",
-            heroSupportText: page.heroSupportText ?? "",
-            seoSections: page.seoSections ?? [],
-            parentChecklist: page.parentChecklist ?? [],
-            seo: page.seo ?? {},
-        }, { upsert: true, new: true, setDefaultsOnInsert: true }).exec();
-    }
-}
 async function ensureSeedPages() {
-    const count = await PageModel.countDocuments().exec();
-    if (count > 0) {
-        return;
-    }
-    if (!seedPromise) {
-        seedPromise = seedPagesFromFrontendStore().finally(() => {
-            seedPromise = null;
-        });
-    }
-    await seedPromise;
+    return;
 }
 function buildPersistedPagePayload(payload, existing) {
     const pageType = payload.pageType ?? existing?.pageType ?? "board";

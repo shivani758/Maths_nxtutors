@@ -49,11 +49,26 @@ function InfoCard({ label, value }) {
 
 function TutorProfile() {
   const { id, slug } = useParams();
-  const { siteData } = useSiteData();
+  const { siteData, isSiteDataLoading } = useSiteData();
   const tutor = useMemo(
     () => (slug ? getTutorProfileBySlug(slug) : getTutorProfileById(id)),
-    [id, slug],
+    [id, slug, siteData.tutors],
   );
+
+  if (!tutor && isSiteDataLoading) {
+    return (
+      <MainLayout>
+        <div className="bg-white px-6 py-24">
+          <div className="mx-auto max-w-4xl rounded-[28px] border border-slate-200 bg-slate-50 p-8 text-center shadow-sm">
+            <h1 className="text-3xl font-bold text-slate-950">Loading tutor profile</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Fetching the live tutor record from Maths Bodhi.
+            </p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   if (!tutor) {
     return <NotFound />;
@@ -72,6 +87,11 @@ function TutorProfile() {
   const serviceChips = uniqueValues(tutor.serviceModes ?? []);
   const localityChips = uniqueValues(tutor.localities ?? []);
   const tagChips = uniqueValues(tutor.associatedTags ?? []);
+  const primaryBoard = boardChips[0] ?? "Maths";
+  const subjectsAndSchools = uniqueValues([
+    ...(topicChips ?? []).slice(0, 2),
+    ...(tutor.schoolFocus ?? []).slice(0, 2),
+  ]).join(" + ");
   const whatsappUrl = buildWhatsAppUrl(
     siteData.contact.whatsappNumber,
     buildTutorInquiryMessage(siteData.contact, tutor, {}),
@@ -81,14 +101,11 @@ function TutorProfile() {
       "@context": "https://schema.org",
       "@type": "Person",
       name: tutor.name,
-      description: intro,
+      jobTitle: "Math Tutor",
+      worksFor: "Maths Bodhi",
+      description: tutor.shortBio ?? intro,
       image: tutor.image,
-      jobTitle: tutor.title,
       knowsAbout: uniqueValues([...(tutor.boards ?? []), ...(tutor.topics ?? []).slice(0, 5)]),
-      worksFor: {
-        "@type": "Organization",
-        name: "Maths Bodhi",
-      },
     },
     ...(tutor.faqItems?.length
       ? [
@@ -138,9 +155,15 @@ function TutorProfile() {
                 Public Tutor Profile
               </span>
               <h1 className="mt-6 max-w-4xl text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
-                {headline}
+                {tutor.name}
               </h1>
-              <p className="mt-4 text-xl font-semibold text-blue-700">{tutor.title}</p>
+              <h2 className="mt-4 text-2xl font-bold text-blue-700">
+                {tutor.experience || "Experienced"} + {primaryBoard}
+              </h2>
+              <h3 className="mt-3 text-lg font-semibold text-slate-800">
+                {subjectsAndSchools || tutor.title}
+              </h3>
+              <p className="mt-4 text-base font-semibold text-slate-600">{tutor.title}</p>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{intro}</p>
 
               <div className="mt-7 flex flex-wrap gap-3">

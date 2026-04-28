@@ -1,4 +1,4 @@
-import { mathsRouteMap } from "../data/mathsBoardConfig";
+import { mathsBoardConfig, mathsRouteMap } from "../data/mathsBoardConfig";
 import { getTutorProfilePath } from "../utils/tutorRoutes";
 import {
   listBoardPagesSnapshot,
@@ -98,7 +98,7 @@ function getPageIdForKey(key) {
 }
 
 function getBoardPageStore() {
-  return listBoardPagesSnapshot().reduce((map, page) => {
+  return [...Object.values(mathsBoardConfig), ...listBoardPagesSnapshot()].reduce((map, page) => {
     map[page.pageKey ?? page.key] = page;
     return map;
   }, {});
@@ -120,7 +120,7 @@ function getRootBoardKey(pageKey = "") {
 }
 
 function getRelevantBoardPageIds(pageKey) {
-  const pages = listBoardPagesSnapshot();
+  const pages = Object.values(getBoardPageStore());
 
   if (pageKey === "hub") {
     return pages.map((page) => page.id ?? getPageIdForKey(page.pageKey ?? page.key));
@@ -350,7 +350,7 @@ export function getMathsBoardPageContentBySegments(board, stage, track) {
 }
 
 export function listMathsBoardPages() {
-  return listBoardPagesSnapshot().map((page) => cloneValue(page));
+  return Object.values(getBoardPageStore()).map((page) => cloneValue(page));
 }
 
 export function getMathsBoardBreadcrumbs(key) {
@@ -562,7 +562,7 @@ export function getRelatedResultsForSubjectPage(page, options = {}) {
 
 export function getBoardLinksForTutor(tutor, options = {}) {
   const { limit = 3 } = options;
-  const boardPages = listBoardPagesSnapshot();
+  const boardPages = Object.values(getBoardPageStore());
 
   return dedupeById(
     (tutor?.boards ?? [])

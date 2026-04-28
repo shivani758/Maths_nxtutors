@@ -1,9 +1,65 @@
-import { apiRequest, isApiUnavailableError } from "./apiClient";
-import { getMockStoreSnapshot, subscribeMockStore } from "./mockCmsStore";
+import { apiRequest } from "./apiClient";
 
 const EVENT_NAME = "maths-bodhi-public-site-change";
 
-let apiContentCache = null;
+const DEFAULT_SETTINGS = {
+  siteName: "Maths Bodhi",
+  supportEmail: "support@mathsbodhi.in",
+  whatsappNumber: "919896825986",
+  phoneDisplay: "+91 9896825986",
+  footerLinks: [],
+  contact: {
+    phoneDisplay: "+91 9896825986",
+    whatsappNumber: "919896825986",
+    email: "support@mathsbodhi.in",
+    supportHours: "Mon to Sat, 9 AM to 8 PM",
+    city: "Gurugram",
+    state: "Haryana",
+    country: "India",
+  },
+  socialLinks: {},
+  analyticsIds: {},
+  branding: {
+    logoMark: "/favicon.svg",
+    defaultHeroImage: "/images/hero-maths-home.svg",
+  },
+  seo: {
+    title: "Maths Bodhi",
+    description: "Maths Bodhi tutoring support.",
+    canonicalUrl: "",
+    keywords: [],
+    ogImage: "/images/hero-maths-home.svg",
+    indexable: true,
+  },
+  homepage: {
+    eyebrow: "Maths Home Tuition",
+    heroTitle: "Find the right maths tutor",
+    heroSubtitle: "Compare real tutor profiles, boards, classes, and lesson modes from the live Maths Bodhi backend.",
+    keywordChips: [],
+    stats: [],
+    serviceBullets: [],
+    intentTitle: "",
+    intentParagraphs: [],
+    goalTitle: "",
+    goalParagraphs: [],
+  },
+  premiumSchools: [],
+};
+
+const EMPTY_PUBLIC_STORE = {
+  settings: DEFAULT_SETTINGS,
+  tutors: [],
+  tutorProfiles: [],
+  reviews: [],
+  results: [],
+  blogs: [],
+  pages: [],
+  faqs: [],
+  cities: [],
+  localities: [],
+};
+
+let apiContentCache = cloneValue(EMPTY_PUBLIC_STORE);
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -21,18 +77,14 @@ function emitSiteChange() {
   window.dispatchEvent(new Event(EVENT_NAME));
 }
 
+function toArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
 function getMergedStore() {
-  const seedStore = getMockStoreSnapshot();
-
-  if (!apiContentCache) {
-    return seedStore;
-  }
-
-  const seedProfileMap = new Map((seedStore.tutorProfiles ?? []).map((profile) => [profile.tutorId, profile]));
   const tutorProfiles = (apiContentCache.tutors ?? []).map((tutor) => {
-    const seedProfile = seedProfileMap.get(tutor.id);
     return {
-      id: seedProfile?.id ?? `profile-${tutor.id}`,
+      id: tutor.profile?.id ?? `profile-${tutor.id}`,
       tutorId: tutor.id,
       longFormProfile: tutor.fullBio ?? "",
       qualifications: tutor.qualifications ?? [],
@@ -40,20 +92,17 @@ function getMergedStore() {
       achievements: tutor.achievements ?? [],
       associatedBoards: tutor.boards ?? [],
       associatedTags: tutor.badges ?? [],
-      profileMediaIds: seedProfile?.profileMediaIds ?? [],
-      linkedFaqIds: seedProfile?.linkedFaqIds ?? [],
+      profileMediaIds: tutor.profile?.profileMediaIds ?? [],
+      linkedFaqIds: tutor.profile?.linkedFaqIds ?? [],
       linkedStudentResultIds: tutor.linkedResultIds ?? [],
     };
   });
 
   return {
-    ...seedStore,
-    tutors: apiContentCache.tutors ?? seedStore.tutors,
-    tutorProfiles: apiContentCache.tutors ? tutorProfiles : seedStore.tutorProfiles,
-    reviews: apiContentCache.reviews ?? seedStore.reviews,
-    results: apiContentCache.results ?? seedStore.results,
-    blogs: apiContentCache.blogs ?? seedStore.blogs,
-    pages: apiContentCache.pages ?? seedStore.pages,
+    ...EMPTY_PUBLIC_STORE,
+    ...apiContentCache,
+    settings: DEFAULT_SETTINGS,
+    tutorProfiles,
   };
 }
 
@@ -181,32 +230,41 @@ function toPublicLocalityPage(locality) {
 }
 
 export async function refreshPublicSiteData() {
-  try {
-    const payload = await apiRequest("/api/public/bootstrap");
-    apiContentCache = {
-      tutors: payload.tutors ?? [],
-      blogs: payload.blogs ?? [],
-      reviews: payload.reviews ?? [],
-      results: payload.results ?? [],
-      pages: payload.pages ?? [],
-    };
-    emitSiteChange();
-    return payload;
-  } catch (error) {
-    if (!isApiUnavailableError(error)) {
-      throw error;
-    }
+  const [bootstrapResult, tutorsResult, blogsResult, reviewsResult] = await Promise.all([
+    fetchPublicPayload("/api/public/bootstrap"),
+    fetchPublicArray("/api/tutors"),
+    fetchPublicArray("/api/blogs"),
+    fetchPublicArray("/api/reviews"),
+  ]);
+  const bootstrap = bootstrapResult.ok ? bootstrapResult.data : {};
 
-    return null;
-  }
+  apiContentCache = {
+    ...EMPTY_PUBLIC_STORE,
+    tutors: tutorsResult.ok ? tutorsResult.data : toArray(bootstrap.tutors),
+    blogs: blogsResult.ok ? blogsResult.data : toArray(bootstrap.blogs),
+    reviews: reviewsResult.ok ? reviewsResult.data : toArray(bootstrap.reviews),
+    results: toArray(bootstrap.results),
+    pages: toArray(bootstrap.pages),
+  };
+  emitSiteChange();
+  return cloneValue(apiContentCache);
 }
 
 export function getSiteDataSnapshot() {
   const store = getMergedStore();
   const settings = store.settings;
   const homeTutors = store.tutors
-    .filter((tutor) => tutor.status === "active" && tutor.featuredInHome !== false)
-    .sort((first, second) => (first.displayOrder ?? 999) - (second.displayOrder ?? 999))
+    .filter((tutor) => !tutor.status || tutor.status === "active")
+    .sort((first, second) => {
+      const firstFeatured = Number(Boolean(first.featuredInHome || first.featured));
+      const secondFeatured = Number(Boolean(second.featuredInHome || second.featured));
+
+      if (firstFeatured !== secondFeatured) {
+        return secondFeatured - firstFeatured;
+      }
+
+      return (first.displayOrder ?? 999) - (second.displayOrder ?? 999);
+    })
     .map(toPublicTutor);
   const homeReviews = store.reviews
     .filter((review) => (review.status ?? review.moderationStatus) === "approved")
@@ -238,12 +296,10 @@ export function subscribeSiteData(listener) {
     return () => {};
   }
 
-  const unsubscribeMockStore = subscribeMockStore(() => listener(getSiteDataSnapshot()));
   const handleEvent = () => listener(getSiteDataSnapshot());
   window.addEventListener(EVENT_NAME, handleEvent);
 
   return () => {
-    unsubscribeMockStore();
     window.removeEventListener(EVENT_NAME, handleEvent);
   };
 }
@@ -282,4 +338,27 @@ export function listPublishedBlogsSnapshot() {
 
 export function listFaqsSnapshot() {
   return cloneValue(getMergedStore().faqs);
+}
+
+async function fetchPublicArray(path) {
+  try {
+    const data = await apiRequest(path);
+    return { ok: true, data: toArray(data) };
+  } catch (error) {
+    console.error(`${path} API failed:`, error);
+    return { ok: false, data: [] };
+  }
+}
+
+async function fetchPublicPayload(path) {
+  try {
+    const data = await apiRequest(path);
+    return {
+      ok: true,
+      data: data && typeof data === "object" ? data : {},
+    };
+  } catch (error) {
+    console.error(`${path} API failed:`, error);
+    return { ok: false, data: {} };
+  }
 }
