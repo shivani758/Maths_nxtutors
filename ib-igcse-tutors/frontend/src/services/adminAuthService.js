@@ -61,9 +61,9 @@ export async function loginAdminSession(credentials) {
   const payload = await apiRequest("/api/auth/login", {
     method: "POST",
     body: {
-      email: credentials.email,
-      password: credentials.password,
-    },
+  identifier: credentials.email,
+  password: credentials.password,
+},
   });
   cachedSession = toSessionPayload(payload);
   emitSessionChange();
